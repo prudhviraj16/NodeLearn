@@ -1,8 +1,14 @@
 const express = require('express')
 const morgan = require('morgan')
+const mongoose = require('mongoose')
 const hotelRouter = require('./routers/hotelRouter')
 const userRouter = require('./routers/usersRouter')
 const app = express()
+
+const connectionString ='mongodb+srv://admin:mz8gMRnRTqAM5D65@cluster0.qit5kfq.mongodb.net/bookmystay?appName=Cluster0'
+mongoose.connect(connectionString)
+.then((conn) => console.log("Connection to DB successful"))
+.catch(err => console.log("Couldn't connect to MongoDB"))
 const logger = (req,res,next) => {
     console.log(req.method, req.url)
     next()
