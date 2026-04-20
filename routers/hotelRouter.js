@@ -1,16 +1,25 @@
-const hotelController = require('../controller/hotelsController')
-const express = require('express')
-const hotelRouter = express.Router()
+const hotelController = require("../controller/hotelsController");
+const express = require("express");
+const hotelRouter = express.Router();
 
-hotelRouter.param('id', hotelController.checkHotelExist)
+hotelRouter
+  .route("/get-featured")
+  .get(hotelController.getFeaturedHotels, hotelController.getAll);
 
-hotelRouter.route("/")
-   .get(hotelController.getAll)
-   .post(hotelController.validateRequestBody, hotelController.create)
+hotelRouter
+  .route("/get-hotel-stats")
+  .get(hotelController.getHotelStats);
 
-hotelRouter.route("/:id")
-   .get(hotelController.getById)
-   .patch(hotelController.update)
-   .delete(hotelController.delete)
+hotelRouter
+  .route("/get-hotel-by-category/:category")
+  .get(hotelController.getHotelByCategory);
 
-module.exports = hotelRouter
+hotelRouter.route("/").get(hotelController.getAll).post(hotelController.create);
+
+hotelRouter
+  .route("/:id")
+  .get(hotelController.getById)
+  .patch(hotelController.update)
+  .delete(hotelController.delete);
+
+module.exports = hotelRouter;

@@ -1,1 +1,112 @@
-[{"id":2,"name":"Mountain View Lodge","type":"Resort","ratings":4.5,"city":"Goa","country":"India","price":8500},{"id":3,"name":"Mountain View Lodge","type":"Boutique","ratings":4.2,"city":"Manali","country":"India","price":6500}]
+[
+  {
+    "name": "The Oberoi, Bengaluru",
+    "description": "Luxury hotel in the heart of Bengaluru, offering serene gardens, world-class dining, and elegant rooms.",
+    "type": "Hotel",
+    "category": ["Luxury", "Urban"],
+    "city": "Bengaluru",
+    "address": "37-39, MG Road, Bengaluru, Karnataka 560001",
+    "distance": "35 km from Kempegowda International Airport (BLR)",
+    "cheapestPrice": 200,
+    "rating": 4.6
+  },
+  {
+    "name": "ITC Grand Chola, Chennai",
+    "description": "Majestic hotel in Chennai combining traditional architecture with modern luxury and multiple gourmet options.",
+    "type": "Hotel",
+    "category": ["Luxury", "Historic"],
+    "city": "Chennai",
+    "address": "63-65, Mount Road, Chennai, Tamil Nadu 600002",
+    "distance": "13 km from Chennai International Airport (MAA)",
+    "cheapestPrice": 180,
+    "rating": 4.5
+  },
+  {
+    "name": "JW Marriott, Kolkata",
+    "description": "Elegant hotel in Kolkata with riverside views, exceptional service, and multiple dining experiences.",
+    "type": "Hotel",
+    "category": ["Luxury", "Urban"],
+    "city": "Kolkata",
+    "address": "15, Lobby Street, Kolkata, West Bengal 700016",
+    "distance": "20 km from Netaji Subhash Chandra Bose International Airport (CCU)",
+    "cheapestPrice": 220,
+    "rating": 4.4
+  },
+  {
+    "name": "Leela Palace, New Delhi",
+    "description": "Opulent hotel in Delhi offering exquisite architecture, luxurious rooms, and top-class hospitality.",
+    "type": "Hotel",
+    "category": ["Luxury", "Historic"],
+    "city": "New Delhi",
+    "address": "Diplomatic Enclave, Chanakyapuri, New Delhi, Delhi 110021",
+    "distance": "12 km from Indira Gandhi International Airport (DEL)",
+    "cheapestPrice": 300,
+    "rating": 4.8
+  },
+  {
+    "name": "Taj Lake Palace, Udaipur",
+    "description": "Iconic floating hotel in Udaipur with panoramic lake views and royal experiences.",
+    "type": "Hotel",
+    "category": ["Historic", "Luxury", "Romantic"],
+    "city": "Udaipur",
+    "address": "Lake Pichola, Udaipur, Rajasthan 313001",
+    "distance": "25 km from Maharana Pratap Airport (UDR)",
+    "cheapestPrice": 350,
+    "rating": 4.9
+  },
+  {
+    "name": "Hyatt Regency, Pune",
+    "description": "Contemporary hotel in Pune with spacious rooms, multiple dining options, and excellent business facilities.",
+    "type": "Hotel",
+    "category": ["Luxury", "Business"],
+    "city": "Pune",
+    "address": "Senapati Bapat Road, Pune, Maharashtra 411016",
+    "distance": "15 km from Pune Airport (PNQ)",
+    "cheapestPrice": 150,
+    "rating": 4.3
+  },
+  {
+    "name": "Radisson Blu, Jaipur",
+    "description": "Modern hotel in Jaipur offering vibrant rooms, luxury amenities, and excellent hospitality.",
+    "type": "Hotel",
+    "category": ["Luxury", "Urban"],
+    "city": "Jaipur",
+    "address": "JLN Marg, Jaipur, Rajasthan 302017",
+    "distance": "15 km from Jaipur International Airport (JAI)",
+    "cheapestPrice": 140,
+    "rating": 4.2
+  },
+  {
+    "name": "Novotel, Hyderabad",
+    "description": "Contemporary hotel in Hyderabad with modern rooms, convenient location, and multiple restaurants.",
+    "type": "Hotel",
+    "category": ["Business", "Urban"],
+    "city": "Hyderabad",
+    "address": "HITEC City, Hyderabad, Telangana 500081",
+    "distance": "30 km from Rajiv Gandhi International Airport (HYD)",
+    "cheapestPrice": 130,
+    "rating": 4.1
+  },
+  {
+    "name": "Taj Krishna, Hyderabad",
+    "description": "Iconic luxury hotel in Hyderabad offering refined comfort, exceptional service, and fine dining.",
+    "type": "Hotel",
+    "category": ["Luxury", "Urban"],
+    "city": "Hyderabad",
+    "address": "Road No 1, Banjara Hills, Hyderabad, Telangana 500034",
+    "distance": "28 km from Rajiv Gandhi International Airport (HYD)",
+    "cheapestPrice": 210,
+    "rating": 4.7
+  },
+  {
+    "name": "Vivanta, Goa",
+    "description": "Beachfront resort in Goa with luxurious rooms, tropical gardens, and multiple dining options.",
+    "type": "Hotel",
+    "category": ["Luxury", "Resort", "Beachfront"],
+    "city": "Goa",
+    "address": "Calangute, Goa 403516",
+    "distance": "40 km from Dabolim Airport (GOI)",
+    "cheapestPrice": 180,
+    "rating": 4.6
+  }
+]
