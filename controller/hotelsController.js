@@ -1,249 +1,192 @@
 const Hotel = require("../models/hotel");
 const ApiFeatures = require("./../utilities/features");
+const AppError = require("../utilities/appError");
+const catchAsync = require("../utilities/catchAsync");
 
-exports.getAll = async (req, res) => {
+exports.getAll = catchAsync(async (req, res, next) => {
   const features = new ApiFeatures(Hotel.find(), req.query);
-  try {
-    const hotels = features.filter().sort().limitFields().paginate().queryObj;
-    const query = await hotels;
-    res.status(201).json({
-      status: "success",
-      count: query.length,
-      data: {
-        data: query,
-      },
-    });
-  } catch (err) {
-    console.log(err, "here");
-    res.status(500).json({
-      status: "fail",
-      message: "Something went wrong. Please try again later.",
-      error: err,
-    });
+  const hotels = features.filter().sort().limitFields().paginate().queryObj;
+  const query = await hotels;
+  console.log(x)
+  if(!query) {
+    const error = new AppError('The hotel with given ID is not found', 404)
+    return next(error)
   }
-};
+  res.status(201).json({
+    status: "success",
+    count: query.length,
+    data: {
+      data: query,
+    },
+  });
+});
 
-exports.getById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const hotel = await Hotel.findById(id);
-    res.status(201).json({
-      status: "success",
-      data: {
-        data: hotel,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message: "Something went wrong. Please try again later",
-    });
+exports.getById = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const hotel = await Hotel.findById(id);
+  if (!hotel) {
+    const error = new AppError("The hotel with given ID is not found.", 404);
+    return next(error);
   }
-};
+  res.status(201).json({
+    status: "success",
+    data: {
+      data: hotel,
+    },
+  });
+});
 
-exports.create = async (req, res) => {
-  try {
-    const newHotel = await Hotel.create(req.body);
-    res.status(201).json({
-      status: "success",
-      data: {
-        movie: newHotel,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message: "Something went wrong. Please try again later.",
-    });
+exports.create = catchAsync(async (req, res, next) => {
+  const newHotel = await Hotel.create(req.body);
+  res.status(201).json({
+    status: "success",
+    data: {
+      movie: newHotel,
+    },
+  });
+});
+
+exports.update = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const hotel = await Hotel.findById(id);
+  const body = req.body;
+  const updatedHotel = await Hotel.findOneAndUpdate({_id : id}, body, { new: true, runValidators : true });
+
+  if(!updatedHotel) {
+    const error = new AppError('The hotel with given ID is not found', 404)
+    return next(error)
   }
-};
+  res.status(201).json({
+    status: "success",
+    data: {
+      data: updatedHotel,
+    },
+  });
+});
 
-exports.update = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const hotel = await Hotel.findById(id);
-    const body = req.body;
-    const updatedHotel = await Hotel.findByIdAndUpdate(id, body, { new: true });
-    res.status(201).json({
-      status: "success",
-      data: {
-        data: updatedHotel,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message: "Something went wrong. Please try again later",
-    });
+exports.delete = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const hotel = await Hotel.findByIdAndDelete(id);
+  if(!hotel) {
+    const error = new AppError('The hotel with given ID is not found', 404)
+    return next(error)
   }
-};
+  res.status(201).json({
+    status: "success",
+    data: {
+      data: hotel,
+    },
+  });
+});
 
-exports.delete = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const hotel = await Hotel.findByIdAndDelete(id);
-    res.status(201).json({
-      status: "success",
-      data: {
-        data: hotel,
+exports.getHotelStats = catchAsync(async (req, res, next) => {
+  const stats = await Hotel.aggregate([
+    { $match: { type: "Hotel" } },
+    {
+      $group: {
+        _id: "$city",
+        averagePrice: { $avg: "$cheapestPrice" },
+        minPrice: { $min: "$cheapestPrice" },
+        maxPrice: { $max: "$cheapestPrice" },
+        totalPrice: { $sum: "$cheapestPrice" },
+        count: { $sum: 1 },
       },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message: "Something went wrong. Please try again later",
-    });
-  }
-};
+    },
+    { $sort: { minPrice: -1 } },
+    { $match: { count: { $gt: 1 } } },
+  ]);
+  res.status(200).json({
+    status: "success",
+    count: stats.length,
+    data: {
+      stats,
+    },
+  });
+});
 
-exports.getHotelStats = async (req, res) => {
-  try {
-    const stats = await Hotel.aggregate([
-      { $match: { type: "Hotel" } },
-      {
-        $group: {
-          _id: "$city",
-          averagePrice: { $avg: "$cheapestPrice" },
-          minPrice: { $min: "$cheapestPrice" },
-          maxPrice: { $max: "$cheapestPrice" },
-          totalPrice: { $sum: "$cheapestPrice" },
-          count: { $sum: 1 },
-        },
+exports.getHotelByCategory = catchAsync(async (req, res, next) => {
+  const category = req.params.category;
+  const stats = await Hotel.aggregate([
+    { $unwind: "$category" },
+    {
+      $group: {
+        _id: "$category",
+        count: { $sum: 1 },
+        hotels: { $push: "$name" },
       },
-      { $sort: { minPrice: -1 } },
-      { $match: { count: { $gt: 1 } } },
-    ]);
-    res.status(200).json({
-      status: "success",
-      count: stats.length,
-      data: {
-        stats,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "fail",
-      message:
-        "Something went wrong. Please try again later. Error: " + error.message,
-    });
-  }
-};
+    },
+    { $addFields: { category: "$_id", isActive: true } },
+    { $match: { category: category } },
+    { $project: { _id: 0 } },
+    { $sort: { count: -1 } },
+    { $limit: 5 },
+  ]);
+  res.status(200).json({
+    status: "success",
+    count: stats.length,
+    data: {
+      stats,
+    },
+  });
+});
 
-exports.getHotelByCategory = async (req, res) => {
-  try {
-    const category = req.params.category;
-    const stats = await Hotel.aggregate([
-      { $unwind: "$category" },
-      {
-        $group: {
-          _id: "$category",
-          count: { $sum: 1 },
-          hotels: { $push: "$name" },
-        },
-      },
-      { $addFields: { category: "$_id", isActive: true } },
-      { $match: { category: category } },
-      { $project: { _id: 0 } },
-      { $sort: { count: -1 } },
-      { $limit: 5 },
-    ]);
-    res.status(200).json({
-      status: "success",
-      count: stats.length,
-      data: {
-        stats,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      status: "fail",
-      message:
-        "Something went wrong. Please try again later. Error: " + error.message,
-    });
-  }
-};
+exports.getFeaturedHotels = catchAsync(async (req, res, next) => {
+  const featuredHotels = await Hotel.aggregate([
+    { $match: { featured: true } },
+    { $sort: { ratings: -1 } },
+    { $limit: 4 },
+  ]);
 
-exports.getFeaturedHotels = async (req, res) => {
-  try {
-    const featuredHotels = await Hotel.aggregate([
-      { $match: { featured: true } },
-      { $sort: { ratings: -1 } },
-      { $limit: 4 },
-    ]);
+  res.status(200).json({
+    status: "success",
+    data: {
+      features: featuredHotels,
+    },
+  });
+});
 
-    res.status(200).json({
-      status: "success",
-      data: {
-        features: featuredHotels,
+exports.getHotelsByCity = catchAsync(async (req, res, next) => {
+  const hotelsbyCity = await Hotel.aggregate([
+    {
+      $group: {
+        _id: "$city",
+        count: { $sum: 1 },
+        cheapestPrice: { $min: "$cheapestPrice" },
       },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message:
-        "Something went wrong. Please try again later. Error: " + error.message,
-    });
-  }
-};
+    },
+    { $addFields: { type: "_id" } },
+    { $project: { _id: 0 } },
+    { $sort: { count: -1 } },
+    { $limit: 3 },
+  ]);
 
-exports.getHotelsByCity = async (req, res) => {
-  try {
-    const hotelsbyCity = await Hotel.aggregate([
-      {
-        $group: {
-          _id: "$city",
-          count: { $sum: 1 },
-          cheapestPrice: { $min: "$cheapestPrice" },
-        },
-      },
-      { $addFields: { type: "_id" } },
-      { $project: { _id: 0 } },
-      { $sort: { count: -1 } },
-      { $limit: 3 },
-    ]);
+  res.status(200).json({
+    status: "success",
+    data: {
+      features: hotelsbyCity,
+    },
+  });
+});
 
-    res.status(200).json({
-      status: "success",
-      data: {
-        features: hotelsbyCity,
+exports.getHotelsByType = catchAsync(async (req, res, next) => {
+  const hotelsbyType = await Hotel.aggregate([
+    {
+      $group: {
+        _id: "$type",
+        count: { $sum: 1 },
+        cheapestPrice: { $min: "$cheapestPrice" },
       },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message:
-        "Something went wrong. Please try again later. Error: " + err.message,
-    });
-  }
-};
+    },
+    { $addFields: { type: "_id" } },
+    { $project: { _id: 0 } },
+    { $sort: { count: -1 } },
+    { $limit: 3 },
+  ]);
 
-exports.getHotelsByType = async (req, res) => {
-  try {
-    const hotelsbyType = await Hotel.aggregate([
-      {
-        $group: {
-          _id: "$type",
-          count: { $sum: 1 },
-          cheapestPrice: { $min: "$cheapestPrice" },
-        },
-      },
-      { $addFields: { type: "_id" } },
-      { $project: { _id: 0 } },
-      { $sort: { count: -1 } },
-      { $limit: 3 },
-    ]);
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        features: hotelsbyType,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "fail",
-      message:
-        "Something went wrong. Please try again later. Error: " + err.message,
-    });
-  }
-};
+  res.status(200).json({
+    status: "success",
+    data: {
+      features: hotelsbyType,
+    },
+  });
+});
