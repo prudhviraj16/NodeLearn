@@ -3,5 +3,3 @@ module.exports = (handler) => {
     handler(req,res,next).catch(error => next(error))
   }
 }
-
- 

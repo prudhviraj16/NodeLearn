@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const hotelRouter = require("./routers/hotelRouter");
 const userRouter = require("./routers/usersRouter");
+const authRouter = require("./routers/authRouter");
 const AppError = require("./utilities/appError");
 const globalErrorHandler = require("./controller/errorController");
 
@@ -38,6 +39,7 @@ if (process.env.NODE_ENV === "development") {
 
 app.use("/api/hotels", hotelRouter);
 app.use("/api/users", userRouter);
+app.use("/api/auth", authRouter);
 app.use((req, res, next) => {
   const error = new AppError(
     `Cannot find the resource ${req.originalUrl}`,
