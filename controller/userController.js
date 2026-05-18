@@ -1,14 +1,8 @@
-exports.getAll = (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        
-    })
-}
+const Hotel = require("../models/hotel");
+const ApiFeatures = require("./../utilities/features");
+const AppError = require("../utilities/appError");
+const catchAsync = require("../utilities/catchAsync");
 
-exports.getById = (req, res) => {
-    let id = req.params.id
-    res.status(200).json({
-        status: 'success',
-        
-    })
-}
+exports.updatePassword = catchAsync(async(req,res,next) => {
+
+})
